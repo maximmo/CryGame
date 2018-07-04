@@ -7,11 +7,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import ru.servtechno.cry.states.GameStateManager;
+import ru.servtechno.cry.states.MenuState;
 
 public class CryGame extends ApplicationAdapter {
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 600;
-	public static final String TITLE="Вы орете великолепно!";
+	public static final String TITLE="SHOW TODAY - прокричи мне песню";
 
     private GameStateManager gsm;
 	private SpriteBatch batch;
@@ -21,6 +22,7 @@ public class CryGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		gsm = new GameStateManager();
         Gdx.gl.glClearColor(1, 0, 0, 1);
+        gsm.push(new MenuState(gsm));
 	}
 
 	@Override
