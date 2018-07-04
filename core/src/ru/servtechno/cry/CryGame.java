@@ -12,7 +12,7 @@ import ru.servtechno.cry.states.MenuState;
 public class CryGame extends ApplicationAdapter {
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 600;
-	public static final String TITLE="SHOW TODAY - прокричи мне песню";
+	public static final String TITLE="SHOW TODAY - Прокричи мне песню";
 
     private GameStateManager gsm;
 	private SpriteBatch batch;
