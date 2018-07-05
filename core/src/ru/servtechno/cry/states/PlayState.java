@@ -17,8 +17,8 @@ public class PlayState extends State {
     private Ball ball;
     private Texture bgGame;
 
-    public static final int FLUCTUATION_X = 150;
-    public static final int LOWEST_SPACING = 100;
+    public static final int FLUCTUATION_X = 450;
+    public static final int MIN_SPACING = 100;
     public static final int STONE_COUNT = 30;
 
     private Array<Stone> stones;
@@ -33,8 +33,11 @@ public class PlayState extends State {
 
         randX = new Random();
 
-        for(int i=1; i<STONE_COUNT; i++){
-            stones.add(new Stone(i * (LOWEST_SPACING + Stone.STONE_WIDTH + randX.nextInt(FLUCTUATION_X))));
+        float oldX = 300;
+        for(int i=1; i<=STONE_COUNT; i++){
+            Stone stone = new Stone(oldX + MIN_SPACING + Stone.STONE_WIDTH + randX.nextInt(FLUCTUATION_X));
+            stones.add(stone);
+            oldX = stone.getPosStone().x;
         }
     }
 

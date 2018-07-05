@@ -7,10 +7,11 @@ import java.util.Random;
 
 public class Stone {
 
-    private static final int FLUCTUATION_Y = 300;
-    //public static final int STONE_GAP = 100;
-    //public static final int LOWEST_OPENING = 100;
+    public static final int FLUCTUATION_Y = 100;
+    public static final int STONE_GAP = 100;
     public static final int STONE_WIDTH = 70;
+    public static final int TOP_BORDER = 75;
+    public static final int BOTTOM_BORDER = 75;
 
     private Texture stone;
     private Vector2 posStone;
@@ -21,7 +22,7 @@ public class Stone {
 
         rand = new Random();
 
-        posStone = new Vector2(x, rand.nextInt(FLUCTUATION_Y));
+        posStone = new Vector2(x, rand.nextInt(FLUCTUATION_Y) - STONE_GAP + BOTTOM_BORDER);
     }
 
     public Texture getStone() {
