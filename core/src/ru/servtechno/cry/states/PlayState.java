@@ -3,6 +3,7 @@ package ru.servtechno.cry.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
@@ -16,7 +17,10 @@ public class PlayState extends State {
     private Random randX;
     private Ball ball;
     private Texture bgGame;
+    private Texture ground;
+    private Vector2 groundPos1, groundPos2, groundTopPos1, groundTopPos2;
 
+    public static final int BALL_START_OFFSET = 300;
     public static final int FLUCTUATION_X = 450;
     public static final int MIN_SPACING = 100;
     public static final int STONE_COUNT = 30;
@@ -29,12 +33,18 @@ public class PlayState extends State {
         bgGame = new Texture("bg-game.jpg");
         camera.setToOrtho(false, CryGame.WIDTH, CryGame.HEIGHT);
 
+        ground = new Texture("ground.jpg");
+        groundPos1 = new Vector2(camera.position.x - camera.viewportWidth/2, 0);
+        groundPos2 = new Vector2((camera.position.x - camera.viewportWidth/2) + ground.getWidth(), 0);
+        groundTopPos1 = new Vector2(camera.position.x - camera.viewportWidth/2, bgGame.getHeight() + ground.getHeight());
+        groundTopPos2 = new Vector2((camera.position.x - camera.viewportWidth/2) + ground.getWidth(), bgGame.getHeight()  + ground.getHeight());
+
         stones = new Array<Stone>();
 
         randX = new Random();
 
-        float oldX = 300;
-        for(int i=1; i<=STONE_COUNT; i++){
+        float oldX = BALL_START_OFFSET;
+        for(int i=0; i<=STONE_COUNT; i++){
             Stone stone = new Stone(oldX + MIN_SPACING + Stone.STONE_WIDTH + randX.nextInt(FLUCTUATION_X));
             stones.add(stone);
             oldX = stone.getPosStone().x;
@@ -50,8 +60,16 @@ public class PlayState extends State {
     @Override
     public void update(float dt) {
         handleInput();
+        updateGround();
         ball.update(dt);
-        camera.position.x = ball.getPosition().x + 100;
+        camera.position.x = ball.getPosition().x + BALL_START_OFFSET;
+        for (int i = 0; i < stones.size; i++){
+            Stone stone = stones.get(i);
+
+            if(stone.collides(ball.getBounds())){
+                gsm.set(new PlayState(gsm));
+            }
+        }
         camera.update();
     }
 
@@ -59,17 +77,43 @@ public class PlayState extends State {
     public void render(SpriteBatch sb) {
         sb.setProjectionMatrix(camera.combined);
         sb.begin();
-        sb.draw(bgGame, camera.position.x - (camera.viewportWidth/2), 76);
+        sb.draw(bgGame, camera.position.x - (camera.viewportWidth/2), 75);
         sb.draw(ball.getBall(), ball.getPosition().x, ball.getPosition().y, 64, 64);
         for(Stone stone : stones){
             sb.draw(stone.getStone(), stone.getPosStone().x, stone.getPosStone().y);
         }
+
+        sb.draw(ground, groundPos1.x, groundPos1.y);
+        sb.draw(ground, groundPos2.x, groundPos2.y);
+        sb.draw(ground, groundTopPos1.x, groundTopPos1.y);
+        sb.draw(ground, groundTopPos2.x, groundTopPos2.y);
 
         sb.end();
     }
 
     @Override
     public void dispose() {
-        ball.getBall().dispose();
+        bgGame.dispose();
+        ground.dispose();
+        ball.dispose();
+        for(Stone stone : stones){
+            stone.dispose();
+        }
+
+    }
+
+    private void updateGround(){
+        if(camera.position.x - (camera.viewportWidth/2) > groundPos1.x + ground.getWidth()){
+            groundPos1.add(ground.getWidth() * 2, 0);
+        }
+        if(camera.position.x - (camera.viewportWidth/2) > groundPos2.x + ground.getWidth()){
+            groundPos2.add(ground.getWidth() * 2, 0);
+        }
+        if(camera.position.x - (camera.viewportWidth/2) > groundTopPos1.x + ground.getWidth()){
+            groundTopPos1.add(ground.getWidth() * 2, 0);
+        }
+        if(camera.position.x - (camera.viewportWidth/2) > groundTopPos2.x + ground.getWidth()){
+            groundTopPos2.add(ground.getWidth() * 2, 0);
+        }
     }
 }

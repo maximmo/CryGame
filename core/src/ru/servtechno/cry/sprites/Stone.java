@@ -1,6 +1,7 @@
 package ru.servtechno.cry.sprites;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.Random;
@@ -16,6 +17,7 @@ public class Stone {
     private Texture stone;
     private Vector2 posStone;
     private Random rand;
+    private Rectangle bounds;
 
     public Stone(float x){
         stone = new Texture("stone.jpg");
@@ -23,6 +25,8 @@ public class Stone {
         rand = new Random();
 
         posStone = new Vector2(x, rand.nextInt(FLUCTUATION_Y) - STONE_GAP + BOTTOM_BORDER);
+
+        bounds = new Rectangle(posStone.x, posStone.y, stone.getWidth(), stone.getHeight());
     }
 
     public Texture getStone() {
@@ -33,4 +37,11 @@ public class Stone {
         return posStone;
     }
 
+    public boolean collides(Rectangle player){
+        return player.overlaps(bounds);
+    }
+
+    public void dispose() {
+        stone.dispose();
+    }
 }

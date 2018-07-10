@@ -1,6 +1,7 @@
 package ru.servtechno.cry.sprites;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 public class Ball {
@@ -9,6 +10,7 @@ public class Ball {
     private static final int GRAVITY = -15;
     private Vector3 position;
     private Vector3 velocity;
+    private Rectangle bounds;
 
     private Texture ball;
 
@@ -16,6 +18,7 @@ public class Ball {
         position = new Vector3(x, y, 0);
         velocity = new Vector3(0, 0, 0);
         ball = new Texture("ball.png");
+        bounds = new Rectangle(position.x, position.y, ball.getWidth(), ball.getHeight());
     }
 
     public void update(float dt){
@@ -32,6 +35,12 @@ public class Ball {
         if(position.y > 525 - ball.getHeight()){
             position.y = 525 - ball.getHeight();
         }
+
+        bounds.setPosition(position.x, position.y);
+    }
+
+    public Rectangle getBounds(){
+        return bounds;
     }
 
     public void jump(){
@@ -44,5 +53,9 @@ public class Ball {
 
     public Texture getBall() {
         return ball;
+    }
+
+    public void dispose() {
+        ball.dispose();
     }
 }
