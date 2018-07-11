@@ -70,6 +70,7 @@ public class PlayState extends State {
                 gsm.set(new PlayState(gsm));
             }
         }
+        //нарисовать финишЫ
         camera.update();
     }
 
