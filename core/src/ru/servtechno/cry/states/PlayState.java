@@ -24,8 +24,6 @@ public class PlayState extends State {
     private Texture ground;
     private Vector2 groundPos1, groundPos2, groundTopPos1, groundTopPos2;
 
-    //private AudioDevice playbackDevice;
-    //private AudioRecorder recordingDevice;
     private Music music;
 
     public static final int BALL_START_OFFSET = 300;
@@ -58,8 +56,6 @@ public class PlayState extends State {
             oldX = stone.getPosStone().x;
         }
 
-        //playbackDevice = Gdx.audio.newAudioDevice(44100, true);
-        //recordingDevice = Gdx.audio.newAudioRecorder(44100, true);
         music = Gdx.audio.newMusic(Gdx.files.getFileHandle("music/EgorKrid.mp3", Files.FileType.Internal));
     }
 
@@ -119,8 +115,6 @@ public class PlayState extends State {
         if(music.isPlaying())
             music.stop();
         music.dispose();
-        //recordingDevice.dispose();
-        //playbackDevice.dispose();
     }
 
     private void updateGround(){
@@ -141,14 +135,5 @@ public class PlayState extends State {
     public void playMusic(){
         music.setVolume(0.5f);
         music.play();
-
-//        AudioRecorder recordingDevice = Gdx.audio.newAudioRecorder(44100, true);
-//
-//        short[] samples = new short[44100*10];
-//        recordingDevice.read(samples, 0 , samples.length);
-//        recordingDevice.dispose();
-
-
-        //playbackDevice.writeSamples(samples, 0, samples.length);
-   }
+    }
 }
