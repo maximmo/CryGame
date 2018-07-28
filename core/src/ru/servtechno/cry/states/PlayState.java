@@ -1,6 +1,10 @@
 package ru.servtechno.cry.states;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.AudioDevice;
+import com.badlogic.gdx.audio.AudioRecorder;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -19,6 +23,10 @@ public class PlayState extends State {
     private Texture bgGame;
     private Texture ground;
     private Vector2 groundPos1, groundPos2, groundTopPos1, groundTopPos2;
+
+    //private AudioDevice playbackDevice;
+    //private AudioRecorder recordingDevice;
+    private Music music;
 
     public static final int BALL_START_OFFSET = 300;
     public static final int FLUCTUATION_X = 450;
@@ -49,10 +57,17 @@ public class PlayState extends State {
             stones.add(stone);
             oldX = stone.getPosStone().x;
         }
+
+        //playbackDevice = Gdx.audio.newAudioDevice(44100, true);
+        //recordingDevice = Gdx.audio.newAudioRecorder(44100, true);
+        music = Gdx.audio.newMusic(Gdx.files.getFileHandle("music/EgorKrid.mp3", Files.FileType.Internal));
     }
 
     @Override
     protected void handleInput() {
+        //здесь анализ уровня микрофона
+        playMusic();
+
         if(Gdx.input.justTouched())
         ball.jump();
     }
@@ -70,7 +85,7 @@ public class PlayState extends State {
                 gsm.set(new PlayState(gsm));
             }
         }
-        //нарисовать финишЫ
+        //нарисовать финиш
         camera.update();
     }
 
@@ -101,6 +116,11 @@ public class PlayState extends State {
             stone.dispose();
         }
 
+        if(music.isPlaying())
+            music.stop();
+        music.dispose();
+        //recordingDevice.dispose();
+        //playbackDevice.dispose();
     }
 
     private void updateGround(){
@@ -117,4 +137,18 @@ public class PlayState extends State {
             groundTopPos2.add(ground.getWidth() * 2, 0);
         }
     }
+
+    public void playMusic(){
+        music.setVolume(0.5f);
+        music.play();
+
+//        AudioRecorder recordingDevice = Gdx.audio.newAudioRecorder(44100, true);
+//
+//        short[] samples = new short[44100*10];
+//        recordingDevice.read(samples, 0 , samples.length);
+//        recordingDevice.dispose();
+
+
+        //playbackDevice.writeSamples(samples, 0, samples.length);
+   }
 }
