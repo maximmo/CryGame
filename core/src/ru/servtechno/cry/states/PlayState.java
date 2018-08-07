@@ -3,7 +3,6 @@ package ru.servtechno.cry.states;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioDevice;
-import com.badlogic.gdx.audio.AudioRecorder;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,7 +11,14 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.Random;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
+
 import ru.servtechno.cry.CryGame;
+import ru.servtechno.cry.MicMonitoring;
+import ru.servtechno.cry.MusicPlayer;
 import ru.servtechno.cry.sprites.Ball;
 import ru.servtechno.cry.sprites.Stone;
 
@@ -24,7 +30,8 @@ public class PlayState extends State {
     private Texture ground;
     private Vector2 groundPos1, groundPos2, groundTopPos1, groundTopPos2;
 
-    private Music music;
+//    private Music music;
+    private MusicPlayer player;
 
     public static final int BALL_START_OFFSET = 300;
     public static final int FLUCTUATION_X = 450;
@@ -33,10 +40,16 @@ public class PlayState extends State {
 
     private Array<Stone> stones;
 
+    public boolean gameOver;
+
     public PlayState(GameStateManager gsm) {
         super(gsm);
+
+        gameOver = false;
+
         ball = new Ball(100, 300);
         bgGame = new Texture("bg-game.jpg");
+        //bgGame = new Texture("bg-st.jpg");
         camera.setToOrtho(false, CryGame.WIDTH, CryGame.HEIGHT);
 
         ground = new Texture("ground.jpg");
@@ -56,16 +69,27 @@ public class PlayState extends State {
             oldX = stone.getPosStone().x;
         }
 
-        music = Gdx.audio.newMusic(Gdx.files.getFileHandle("music/EgorKrid.mp3", Files.FileType.Internal));
+        player = new MusicPlayer("music/EgorKrid.mp3");
+
     }
 
     @Override
     protected void handleInput() {
-        //здесь анализ уровня микрофона
-        playMusic();
+        //здесь выбор песни и начало игры
+        player.playMusic();
 
-        if(Gdx.input.justTouched())
-        ball.jump();
+        if(gameOver){
+            //здесь вывод результата игры
+            ResultState resultState = new ResultState(gsm);
+            resultState.setResultText(getTime(player.getPosition()));
+
+            player.stopMusic();
+
+            gsm.set(resultState);
+        }
+        else
+            //здесь анализ уровня микрофона
+            ball.jump(CryGame.micMonitoring.getRMSLevel());
     }
 
     @Override
@@ -78,8 +102,10 @@ public class PlayState extends State {
             Stone stone = stones.get(i);
 
             if(stone.collides(ball.getBounds())){
-                gsm.set(new PlayState(gsm));
+                gameOver = true;
             }
+
+            //здесь обработка победы
         }
         //нарисовать финиш
         camera.update();
@@ -111,10 +137,7 @@ public class PlayState extends State {
         for(Stone stone : stones){
             stone.dispose();
         }
-
-        if(music.isPlaying())
-            music.stop();
-        music.dispose();
+        player.dispose();
     }
 
     private void updateGround(){
@@ -132,8 +155,11 @@ public class PlayState extends State {
         }
     }
 
-    public void playMusic(){
-        music.setVolume(0.5f);
-        music.play();
+    private String getTime(float s){
+        //int hours = Math.round(s / 3600);
+        int minutes = Math.round((s % 3600) / 60);
+        int seconds = Math.round(s % 60);
+
+        return  minutes + " min " + seconds + " sec";
     }
 }

@@ -6,13 +6,21 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
+
 import ru.servtechno.cry.states.GameStateManager;
 import ru.servtechno.cry.states.MenuState;
+import sun.rmi.runtime.Log;
 
 public class CryGame extends ApplicationAdapter {
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 600;
 	public static final String TITLE="SHOW TODAY - Прокричи мне песню";
+
+	public static final MicMonitoring micMonitoring = new MicMonitoring();
 
     private GameStateManager gsm;
 	private SpriteBatch batch;
@@ -23,6 +31,8 @@ public class CryGame extends ApplicationAdapter {
 		gsm = new GameStateManager();
         Gdx.gl.glClearColor(1, 0, 0, 1);
         gsm.push(new MenuState(gsm));
+
+		micMonitoring.startCapturing();
 	}
 
 	@Override
@@ -34,6 +44,10 @@ public class CryGame extends ApplicationAdapter {
 	
 	@Override
 	public void dispose () {
-		batch.dispose();
+        micMonitoring.stopCapturing();
+		//micMonitoring.dispose();
+	    batch.dispose();
 	}
+
+
 }

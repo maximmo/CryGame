@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector3;
 
 public class Ball {
 
-    private static final int MOVEMENT = 100;
-    private static final int GRAVITY = -15;
+    private static final int MOVEMENT = 120;
+    private static final int GRAVITY = -100;
     private Vector3 position;
     private Vector3 velocity;
     private Rectangle bounds;
@@ -24,7 +24,7 @@ public class Ball {
     public void update(float dt){
         velocity.add(0, GRAVITY, 0);
         velocity.scl(dt);
-        position.add(MOVEMENT * dt, velocity.y, 0);
+        position.add(MOVEMENT * dt, velocity.y*3.5f, 0);
 
         velocity.scl(1 / dt);
 
@@ -43,8 +43,11 @@ public class Ball {
         return bounds;
     }
 
-    public void jump(){
-        velocity.y = 300;
+    public void jump(int RMSLevel){
+        if(RMSLevel > 40)
+            velocity.y = RMSLevel*3;
+        else
+            velocity.y = RMSLevel;
     }
 
     public Vector3 getPosition() {
